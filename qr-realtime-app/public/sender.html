@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hỏi & Đáp • Live</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #eef6ff;
+      --surface: #ffffff;
+      --surface2: #e0efff;
+      --surface3: #f7fbff;
+      --border: #bfdcff;
+      --text: #0f172a;
+      --text-muted: #56708f;
+      --primary: #1d4ed8;
+      --primary-dark: #1e40af;
+      --primary-soft: #dbeafe;
+      --accent: #0ea5e9;
+      --success: #16a34a;
+      --radius: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(180deg, #f4faff 0%, #eaf4ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+    }
+
+    .header {
+      padding: 1rem 1.8rem;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 4px 18px rgba(29, 78, 216, 0.06);
+    }
+
+    .logo-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-soft);
+      padding: 0.22rem 0.55rem;
+      border-radius: 999px;
+      margin-left: 0.6rem;
+      border: 1px solid #bfdbfe;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #94a3b8;
+      box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.18);
+      transition: all 0.3s;
+    }
+
+    .status-dot.live {
+      background: var(--success);
+      box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.22);
+      animation: ping 2s cubic-bezier(0, .7, .5, 1) infinite;
+    }
+
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-left {
+      background: rgba(255, 255, 255, 0.92);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-shadow: inset -1px 0 0 rgba(191, 220, 255, 0.45);
+    }
+
+    .panel-section {
+      padding: 1.4rem 1.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .btn-create {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.22s;
+      box-shadow: 0 10px 26px rgba(29, 78, 216, 0.22);
+    }
+
+    .btn-create:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(29, 78, 216, 0.28);
+    }
+
+    .session-id-row {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+    }
+
+    .session-id-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .session-id-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--primary-dark);
+    }
+
+    .copy-btn {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--primary-dark);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.18s;
+    }
+
+    .copy-btn:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .copy-btn.copied {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #15803d;
+    }
+
+    .link-box {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      word-break: break-all;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .qr-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.8rem;
+      gap: 1.25rem;
+    }
+
+    .history-dropdown-wrap {
+      position: relative;
+    }
+
+    .qr-frame {
+      background: #ffffff;
+      border: 3px solid #93c5fd;
+      border-radius: 22px;
+      padding: 1.2rem;
+      box-shadow:
+        0 12px 40px rgba(14, 165, 233, 0.14),
+        0 4px 14px rgba(29, 78, 216, 0.1);
+    }
+
+    #qrCanvas {
+      width: 250px !important;
+      height: 250px !important;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .history-dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.3rem;
+      padding: 0.4rem 0.5rem;
+      border-radius: 8px;
+    }
+
+    .history-dropdown-item:hover {
+      background: #eff6ff;
+    }
+
+    .qr-placeholder {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(180deg, #f8fbff, #edf6ff);
+      border-radius: 14px;
+      border: 2px dashed #93c5fd;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      text-align: center;
+      gap: 0.8rem;
+    }
+
+    .panel-right {
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+    }
+
+    .questions-header {
+      padding: 1rem 1.8rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: 0 4px 14px rgba(29, 78, 216, 0.04);
+    }
+
+    .questions-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .q-count {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      min-width: 32px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(29, 78, 216, 0.18);
+    }
+
+    .questions-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.6rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .q-card {
+  background: #ffffff;
+  border: 1px solid #bfdbfe;
+  border-left: 8px solid var(--primary);
+  border-radius: 16px;
+  padding: 1.25rem 1.4rem;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 6px 18px rgba(29, 78, 216, 0.08);
+  align-items: start;
+}
+
+    .q-card:hover {
+      border-color: #60a5fa;
+      background: #fafdff;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(29, 78, 216, 0.12);
+    }
+
+    .q-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  padding-top: 0.2rem;
+}
+
+    .q-text {
+  font-size: 1.28rem;
+  line-height: 1.65;
+  color: var(--text);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+    .done-btn {
+      background: #ffffff;
+      border: 1px solid #93c5fd;
+      color: var(--primary-dark);
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    .done-btn:hover {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .q-card.answered {
+      opacity: 1;
+      border-left-color: #93c5fd;
+      background: #eff6ff;
+      box-shadow: none;
+    }
+    .q-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.q-name {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+    .q-card.answered:hover {
+      transform: none;
+      border-color: #bfdbfe;
+      background: #eff6ff;
+    }
+
+    .q-card.answered .q-name,
+.q-card.answered .q-text,
+.q-card.answered .q-number {
+  color: #5b6f87;
+}
+
+    .done-btn.answered {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #47617b;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .empty-icon {
+      font-size: 4.2rem;
+      opacity: 0.28;
+      margin-bottom: 1.2rem;
+    }
+
+    .empty-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      color: var(--primary-dark);
+    }
+
+    .questions-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .questions-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .questions-body::-webkit-scrollbar-thumb {
+      background: #bfdbfe;
+      border-radius: 999px;
+    }
+
+    .questions-body::-webkit-scrollbar-thumb:hover {
+      background: #93c5fd;
+    }
+
+    @media (max-width: 900px) {
+      .panel-left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="layout">
+    <header class="header">
+      <div style="display:flex; align-items:center;">
+        <span class="logo-title">Hỏi & Đáp</span>
+        <span class="logo-tag">LIVE</span>
+      </div>
+      <div class="header-status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Chưa hoạt động</span>
+      </div>
+    </header>
+
+    <div class="main">
+
+      <aside class="panel-left">
+
+        <div class="panel-section">
+          <div class="panel-label">Tạo phiên hỏi đáp</div>
+          <button class="btn-create" id="createSession">Tạo phiên mới</button>
+        </div>
+
+        <div class="panel-section" id="sessionInfoBlock" style="display:none">
+          <div class="panel-label">Thông tin phiên</div>
+          <div class="session-id-row">
+            <div>
+              <div class="session-id-label">Mã phiên</div>
+              <div class="session-id-value" id="sessionIdDisplay">—</div>
+            </div>
+            <button class="copy-btn" id="copyIdBtn">Copy</button>
+          </div>
+          <div class="link-box" id="sessionLinkDisplay">—</div>
+        </div>
+
+        <div class="qr-section">
+          <div class="qr-frame">
+            <div class="qr-placeholder" id="qrPlaceholder">
+              <div style="font-size:3.8rem; opacity:0.35;">⧈</div>
+              <div>Tạo phiên để<br>hiển thị QR</div>
+            </div>
+            <canvas id="qrCanvas" style="display:none"></canvas>
+          </div>
+          <p style="color:var(--primary-dark); font-size:0.95rem; text-align:center; max-width:260px; font-weight:600;">
+            Quét mã bằng điện thoại để gửi câu hỏi
+          </p>
+        </div>
+
+      </aside>
+
+      <main class="panel-right">
+        <div class="questions-header">
+          <div style="display:flex; align-items:center; gap:0.8rem;">
+            <span class="questions-title">Câu hỏi trực tiếp</span>
+            <span class="q-count" id="qCount">0</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;">
+            <div style="display:flex; gap:0.5rem;">
+              <input id="searchSessionInput" placeholder="Tìm ID phiên..." style="
+              background:#ffffff;
+              border:1px solid var(--border);
+              border-radius:var(--radius-sm);
+              padding:0.6rem 1rem;
+              color:var(--text);
+              width:180px;
+              font-size:0.92rem;
+              outline:none;
+            " />
+              <button id="searchSessionBtn" style="
+              background:linear-gradient(135deg, var(--primary), var(--accent));
+              color:white;
+              border:none;
+              padding:0.6rem 1.1rem;
+              border-radius:var(--radius-sm);
+              font-weight:700;
+              cursor:pointer;
+              box-shadow:0 8px 16px rgba(29,78,216,0.15);
+            ">Tìm</button>
+            </div>
+
+            <div class="history-dropdown-wrap">
+              <button class="history-dropdown-btn" id="historyDropdownBtn" style="
+              background:#ffffff;
+              border:1px solid var(--border);
+              color:var(--primary-dark);
+              padding:0.55rem 1rem;
+              border-radius:var(--radius-sm);
+              cursor:pointer;
+              font-weight:600;
+            ">Lịch sử phiên ▼</button>
+              <div class="history-dropdown-list" id="historyDropdownList"
+                style="display:none; position:absolute; top:110%; right:0; width:280px; z-index:20; background:#ffffff; border-radius:12px; border:1px solid #bfdcff; padding:0.45rem; box-shadow:0 10px 30px rgba(29,78,216,0.12);">
+                <div id="historyDropdownItems" style="max-height:220px; overflow:auto; display:grid; gap:0.35rem;">
+                </div>
+                <div class="history-actions" style="margin-top:0.35rem; text-align:right;">
+                  <button id="deleteAllBtn"
+                    style="background:#dc2626; border:none; color:white; border-radius:8px; padding:0.35rem 0.7rem; cursor:pointer; font-weight:600;">Xóa
+                    tất cả</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="historyList"
+            style="margin-top:0.75rem; border:1px solid #bfdcff; border-radius:10px; background:#ffffff; padding:0.45rem; max-height:180px; overflow:auto; display:none;"></div>
+        </div>
+
+        <div class="questions-body" id="questionsBody">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">💬</div>
+            <div class="empty-title">Chưa có câu hỏi nào</div>
+            <div style="margin-top:0.6rem;">Câu hỏi từ khán giả sẽ xuất hiện tại đây</div>
+          </div>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/sender.js"></script>
+</body>
+
+</html>
