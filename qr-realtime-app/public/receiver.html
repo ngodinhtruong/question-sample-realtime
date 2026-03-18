@@ -17,7 +17,6 @@
     .group{margin-top:1rem;display:flex;flex-direction:column;gap:.35rem;}
     label{font-size:.9rem;color:#1f2937;}
     input,textarea{width:100%;padding:.7rem .8rem;border:1px solid var(--border);border-radius:8px;background:#fff;}
-    textarea{min-height:100px;resize:vertical;}
     .inline{display:flex;gap:.5rem;align-items:flex-end;}
     button{border:0;background:var(--primary);color:#fff;padding:.7rem 1rem;border-radius:8px;font-weight:600;cursor:pointer;}
     button:disabled{background:#9ca3af;cursor:not-allowed;}
@@ -25,6 +24,12 @@
     .message{margin-top:.9rem;padding:.75rem .8rem;border-radius:8px;display:none;font-size:.9rem;}
     .message.success{background:#ecfdf3;color:#065f46;border:1px solid #bbf7d0;display:block;}
     .message.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;display:block;}
+    textarea {
+  min-height: 120px;
+  resize: vertical;
+  white-space: pre-wrap; /* giữ xuống dòng */
+  line-height: 1.5;
+}
   </style>
 </head>
 <body>
@@ -48,7 +53,7 @@
       </div>
       <div class="group">
         <label for="question">Câu hỏi</label>
-        <textarea id="question" maxlength="250" placeholder="Nhập câu hỏi..."></textarea>
+        <textarea id="question" placeholder="Nhập câu hỏi..."></textarea>
       </div>
       <button id="submitBtn" type="submit" disabled>Gửi câu hỏi</button>
     </form>

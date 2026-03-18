@@ -18,7 +18,12 @@ const historyDropdownBtn = document.getElementById('historyDropdownBtn');
 const historyDropdownList = document.getElementById('historyDropdownList');
 const historyDropdownItems = document.getElementById('historyDropdownItems');
 const deleteAllBtn = document.getElementById('deleteAllBtn');
-
+const expandQrBtn = document.getElementById('expandQrBtn');
+const qrModal = document.getElementById('qrModal');
+const qrModalBackdrop = document.getElementById('qrModalBackdrop');
+const closeQrModal = document.getElementById('closeQrModal');
+const qrCanvasLarge = document.getElementById('qrCanvasLarge');
+const qrModalLink = document.getElementById('qrModalLink');
 let sessionId = null;
 let sessionLink = null;
 let questions = [];
@@ -391,7 +396,43 @@ async function loadFromPath() {
 
   setStatus('Chưa có phiên. Tạo phiên mới để bắt đầu.');
 }
+function openQrModal() {
+  if (!sessionLink) return;
+  qrModal.style.display = 'block';
+  qrModalLink.textContent = sessionLink;
 
+  QRCode.toCanvas(qrCanvasLarge, sessionLink, {
+    width: 520,
+    margin: 2,
+    color: { dark: '#0d0d0d', light: '#ffffff' }
+  });
+
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQrModalFn() {
+  qrModal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+if (expandQrBtn) {
+  expandQrBtn.addEventListener('click', openQrModal);
+}
+
+if (closeQrModal) {
+  closeQrModal.addEventListener('click', closeQrModalFn);
+}
+
+if (qrModalBackdrop) {
+  qrModalBackdrop.addEventListener('click', closeQrModalFn);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && qrModal && qrModal.style.display !== 'none') {
+    closeQrModalFn();
+  }
+});
+qrCanvas.addEventListener('click', openQrModal);
+qrCanvas.style.cursor = 'zoom-in';
 renderHistory();
 renderHistoryDropdown();
 loadFromPath();
