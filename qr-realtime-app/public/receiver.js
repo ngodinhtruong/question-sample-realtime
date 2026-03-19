@@ -55,13 +55,30 @@ async function validateSession(sessionId) {
   }
 }
 
-setSessionBtn.addEventListener('click', () => {
+setSessionBtn.addEventListener('click', async () => {
   const id = sessionInput.value.trim();
+
   if (!/^\d{6}$/.test(id)) {
     disableSession('ID phải là 6 chữ số.');
     return;
   }
-  validateSession(id);
+
+  try {
+    const res = await fetch(`/api/sessions/${id}`);
+    if (!res.ok) {
+      if (res.status === 404) {
+        disableSession('Phiên đã hết hạn hoặc không tồn tại. Vui lòng nhập ID khác.');
+      } else {
+        disableSession('Phiên không tồn tại. Vui lòng kiểm tra ID.');
+      }
+      return;
+    }
+
+    window.location.href = `/join/${id}`;
+  } catch (err) {
+    console.error(err);
+    disableSession('Lỗi kết nối. Thử lại.');
+  }
 });
 
 // If link has sessionId param, try using it.
