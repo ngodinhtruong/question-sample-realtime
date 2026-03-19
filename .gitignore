@@ -24,6 +24,6 @@ Thumbs.db
 # misc
 coverage/
 
-data/app.db
+data/
 
 qr-realtime-app/data/app.db
