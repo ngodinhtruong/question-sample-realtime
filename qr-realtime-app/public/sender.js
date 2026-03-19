@@ -24,6 +24,7 @@ const qrModalBackdrop = document.getElementById('qrModalBackdrop');
 const closeQrModal = document.getElementById('closeQrModal');
 const qrCanvasLarge = document.getElementById('qrCanvasLarge');
 const qrModalLink = document.getElementById('qrModalLink');
+const copyIdBtn = document.getElementById('copyIdBtn');
 let sessionId = null;
 let sessionLink = null;
 let questions = [];
@@ -38,7 +39,10 @@ function setActiveSession(id) {
   sessionId = id;
   sessionLink = `${location.origin}/join/${sessionId}`;
   sessionIdEl.textContent = sessionId;
-  sessionLinkEl.textContent = sessionLink;
+sessionLinkEl.textContent = sessionLink;
+sessionLinkEl.href = sessionLink;
+sessionLinkEl.target = '_blank';
+sessionLinkEl.rel = 'noopener noreferrer';
 
   sessionBlock.style.display = 'block';
   qrPlaceholder.style.display = 'none';
@@ -235,7 +239,26 @@ async function loadSessionHistory(id) {
     return false;
   }
 }
+if (copyIdBtn) {
+  copyIdBtn.addEventListener('click', async () => {
+    if (!sessionId && !sessionLink) return;
 
+    try {
+      await navigator.clipboard.writeText(sessionLink || sessionId);
+      copyIdBtn.textContent = 'Đã copy';
+      copyIdBtn.classList.add('copied');
+      setStatus('');
+
+      setTimeout(() => {
+        copyIdBtn.textContent = 'Copy';
+        copyIdBtn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setStatus('Không thể sao chép.');
+    }
+  });
+}
 async function deleteSession(id) {
   if (!/^\d{6}$/.test(id)) return;
   try {
@@ -348,11 +371,11 @@ function copyText(type) {
 socket.on('question-submitted', (payload) => {
   if (!sessionId || payload.sessionId !== sessionId) return;
 
-  questions.unshift({
+  questions.push({
     id: payload.id,
     name: payload.name,
     question: payload.question,
-    answered: false
+    answered: !!payload.answered
   });
 
   renderQuestions();

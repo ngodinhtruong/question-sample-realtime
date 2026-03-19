@@ -10,9 +10,21 @@ function init(server, db) {
 
     socket.on('submit-question', async (payload) => {
       if (!payload || !payload.sessionId || !payload.name || !payload.question) return;
+
       try {
-        await db.addMessage(payload.sessionId, payload.name, payload.question);
-        io.emit('question-submitted', payload);
+        const message = await db.addMessage(
+          payload.sessionId,
+          payload.name,
+          payload.question
+        );
+
+        io.emit('question-submitted', {
+          id: message.id,
+          sessionId: payload.sessionId,
+          name: payload.name,
+          question: payload.question,
+          answered: false
+        });
       } catch (err) {
         console.error('DB error addMessage', err);
       }

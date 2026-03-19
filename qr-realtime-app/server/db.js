@@ -8,46 +8,48 @@ function openDb() {
   return db;
 }
 
-function init() {
-  const db = openDb();
+const { Server } = require('socket.io');
 
-  db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS sessions (
-      sessionId TEXT PRIMARY KEY,
-      createdAt INTEGER
-    )`);
+let io;
 
-    db.run(`CREATE TABLE IF NOT EXISTS messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      sessionId TEXT,
-      name TEXT,
-      question TEXT,
-      createdAt INTEGER,
-      answered INTEGER DEFAULT 0,
-      FOREIGN KEY(sessionId) REFERENCES sessions(sessionId)
-    )`);
+function init(server, db) {
+  io = new Server(server);
 
-    db.all(`PRAGMA table_info(messages)`, [], (err, columns) => {
-      if (err) {
-        console.error('PRAGMA error:', err);
-        return db.close();
-      }
+  io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
 
-      const hasAnswered = columns.some(col => col.name === 'answered');
+    socket.on('submit-question', async (payload) => {
+      if (!payload || !payload.sessionId || !payload.name || !payload.question) return;
 
-      if (!hasAnswered) {
-        db.run(`ALTER TABLE messages ADD COLUMN answered INTEGER DEFAULT 0`, (alterErr) => {
-          if (alterErr) {
-            console.error('ALTER TABLE error:', alterErr);
-          }
-          db.close();
+      try {
+        const message = await db.addMessage(
+          payload.sessionId,
+          payload.name,
+          payload.question
+        );
+
+        io.emit('question-submitted', {
+          id: message.id,
+          sessionId: message.sessionId,
+          name: message.name,
+          question: message.question,
+          createdAt: message.createdAt,
+          answered: !!message.answered
         });
-      } else {
-        db.close();
+      } catch (err) {
+        console.error('DB error addMessage', err);
       }
     });
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected:', socket.id);
+    });
   });
+
+  return io;
 }
+
+module.exports = { init };
 function createSession(sessionId) {
   return new Promise((resolve, reject) => {
     const db = openDb();
@@ -95,7 +97,7 @@ function getMessages(sessionId) {
   return new Promise((resolve, reject) => {
     const db = openDb();
     db.all(
-      'SELECT id, sessionId, name, question, createdAt, answered FROM messages WHERE sessionId = ? ORDER BY createdAt DESC',
+        'SELECT id, sessionId, name, question, createdAt, answered FROM messages WHERE sessionId = ? ORDER BY createdAt ASC, id ASC',
       [sessionId],
       (err, rows) => {
         db.close();
