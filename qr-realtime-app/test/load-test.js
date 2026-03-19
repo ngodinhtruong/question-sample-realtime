@@ -1,7 +1,7 @@
 const io = require("socket.io-client");
 
 const URL = "http://54.179.212.38:3000";
-const PAGE_URL = "http://54.179.212.38:3000/receiver.html?sessionId=786715";
+const PAGE_URL = "http://54.179.212.38:3000/receiver.html?sessionId=129305";
 const TOTAL_USERS = 500;
 
 let success = 0;

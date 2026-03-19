@@ -420,8 +420,10 @@ async function loadFromPath() {
   setStatus('');
 }
 function openQrModal() {
-  if (!sessionLink) return;
-  qrModal.style.display = 'block';
+  if (!sessionLink || !qrModal || !qrCanvasLarge) return;
+
+  qrCanvasLarge.width = qrCanvasLarge.width;
+  qrModal.classList.add('show');
   qrModalLink.textContent = sessionLink;
 
   QRCode.toCanvas(qrCanvasLarge, sessionLink, {
@@ -430,12 +432,13 @@ function openQrModal() {
     color: { dark: '#0d0d0d', light: '#ffffff' }
   });
 
-  document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-open');
 }
 
 function closeQrModalFn() {
-  qrModal.style.display = 'none';
-  document.body.style.overflow = '';
+  if (!qrModal) return;
+  qrModal.classList.remove('show');
+  document.body.classList.remove('modal-open');
 }
 if (expandQrBtn) {
   expandQrBtn.addEventListener('click', openQrModal);
@@ -450,9 +453,13 @@ if (qrModalBackdrop) {
 }
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && qrModal && qrModal.style.display !== 'none') {
+  if (e.key === 'Escape' && qrModal && qrModal.classList.contains('show')) {
     closeQrModalFn();
   }
+});
+qrCanvas.addEventListener('click', () => {
+  console.log('clicked qr', { sessionLink });
+  openQrModal();
 });
 qrCanvas.addEventListener('click', openQrModal);
 qrCanvas.style.cursor = 'zoom-in';
