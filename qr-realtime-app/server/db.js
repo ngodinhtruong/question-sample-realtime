@@ -1,14 +1,54 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
+const { Server } = require('socket.io');
 
-const DB_PATH = path.join(__dirname, '..', 'data', 'app.db');
+const DB_DIR = path.join(__dirname, '..', 'data');
+const DB_PATH = path.join(DB_DIR, 'app.db');
 
-// ✅ chỉ mở 1 connection duy nhất
-const db = new sqlite3.Database(DB_PATH);
+if (!fs.existsSync(DB_DIR)) {
+  fs.mkdirSync(DB_DIR, { recursive: true });
+}
 
-// 👉 bật WAL mode (quan trọng)
-db.run("PRAGMA journal_mode = WAL;");
-db.run("PRAGMA synchronous = NORMAL;");
+// chi mo 1 connection duy nhat
+const db = new sqlite3.Database(DB_PATH, (err) => {
+  if (err) {
+    console.error('Cannot open database:', err);
+  } else {
+    console.log('SQLite connected:', DB_PATH);
+  }
+});
+
+// pragma
+db.serialize(() => {
+  db.run('PRAGMA journal_mode = WAL;');
+  db.run('PRAGMA synchronous = NORMAL;');
+  db.run('PRAGMA foreign_keys = ON;');
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      sessionId TEXT PRIMARY KEY,
+      createdAt INTEGER NOT NULL
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sessionId TEXT NOT NULL,
+      name TEXT NOT NULL,
+      question TEXT NOT NULL,
+      createdAt INTEGER NOT NULL,
+      answered INTEGER NOT NULL DEFAULT 0,
+      FOREIGN KEY (sessionId) REFERENCES sessions(sessionId) ON DELETE CASCADE
+    )
+  `);
+
+  db.run(`
+    CREATE INDEX IF NOT EXISTS idx_messages_session_created
+    ON messages(sessionId, createdAt, id)
+  `);
+});
 
 // retry helper
 function runWithRetry(sql, params = [], retries = 5) {
@@ -27,8 +67,6 @@ function runWithRetry(sql, params = [], retries = 5) {
   });
 }
 
-const { Server } = require('socket.io');
-
 let io;
 
 function init(server) {
@@ -41,6 +79,12 @@ function init(server) {
       if (!payload || !payload.sessionId || !payload.name || !payload.question) return;
 
       try {
+        const session = await getSession(payload.sessionId);
+        if (!session) {
+          console.warn('Session not found:', payload.sessionId);
+          return;
+        }
+
         const message = await addMessage(
           payload.sessionId,
           payload.name,
@@ -78,7 +122,7 @@ function getSession(sessionId) {
       [sessionId],
       (err, row) => {
         if (err) return reject(err);
-        resolve(row);
+        resolve(row || null);
       }
     );
   });
@@ -107,7 +151,7 @@ function getMessages(sessionId) {
       [sessionId],
       (err, rows) => {
         if (err) return reject(err);
-        resolve(rows);
+        resolve(rows || []);
       }
     );
   });
