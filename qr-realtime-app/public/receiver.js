@@ -26,7 +26,7 @@ function setSession(sessionId) {
   sessionBadge.style.color = '#1d4ed8';
   submitBtn.disabled = false;
   askForm.style.display = 'block';
-  showMessage('Phiên đã bật. Bạn có thể gửi câu hỏi.', 'success');
+  // showMessage('Phiên đã bật. Bạn có thể gửi câu hỏi.', 'success');
 }
 
 function disableSession(message) {

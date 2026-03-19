@@ -1,67 +1,589 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Đặt Câu Hỏi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIU Law • Đặt Câu Hỏi</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <style>
-    :root { --primary:#2563eb; --success:#10b981; --danger:#ef4444; --bg:#f8fafc; --card:#fff; --text:#1f2937; --border:#cbd5e1; --radius:12px; }
-    *{box-sizing:border-box;}
-    body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;}
-    .app{width:100%;max-width:520px;background:var(--card);border-radius:var(--radius);box-shadow:0 10px 25px rgba(15,23,42,.08);padding:1.35rem;border:1px solid #e2e8f0;}
-    h1{margin:0;font-size:1.45rem;color:#0f172a;}
-    .subtitle{color:#475569;font-size:.93rem;margin-top:.25rem;}
-    .group{margin-top:1rem;display:flex;flex-direction:column;gap:.35rem;}
-    label{font-size:.9rem;color:#1f2937;}
-    input,textarea{width:100%;padding:.7rem .8rem;border:1px solid var(--border);border-radius:8px;background:#fff;}
-    .inline{display:flex;gap:.5rem;align-items:flex-end;}
-    button{border:0;background:var(--primary);color:#fff;padding:.7rem 1rem;border-radius:8px;font-weight:600;cursor:pointer;}
-    button:disabled{background:#9ca3af;cursor:not-allowed;}
-    .badge{display:inline-block;background:#eff6ff;color:#1d4ed8;padding:.25rem .7rem;border-radius:999px;font-weight:600;font-size:.85rem;}
-    .message{margin-top:.9rem;padding:.75rem .8rem;border-radius:8px;display:none;font-size:.9rem;}
-    .message.success{background:#ecfdf3;color:#065f46;border:1px solid #bbf7d0;display:block;}
-    .message.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;display:block;}
-    textarea {
-  min-height: 120px;
-  resize: vertical;
-  white-space: pre-wrap; /* giữ xuống dòng */
-  line-height: 1.5;
+    :root {
+      --brand: #c8102e;
+      --brand-dark: #9f0f25;
+      --brand-soft: #fdecee;
+      --gold: #c59a3d;
+      --text: #171717;
+      --text-muted: #6b7280;
+      --border: #efd0d5;
+      --bg: #f8f8fb;
+      --card: rgba(255, 255, 255, 0.94);
+      --success: #16a34a;
+      --danger: #dc2626;
+      --radius: 22px;
+      --shadow: 0 24px 60px rgba(17, 17, 17, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top left, rgba(200, 16, 46, 0.09), transparent 30%),
+        radial-gradient(circle at top right, rgba(197, 154, 61, 0.08), transparent 22%),
+        linear-gradient(180deg, #fcfcfd 0%, #f7f7fb 100%);
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(239, 208, 213, 0.85);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .left {
+      position: relative;
+      padding: 2rem;
+      background:
+        linear-gradient(145deg, rgba(200,16,46,0.98), rgba(159,15,37,0.98));
+      color: white;
+      overflow: hidden;
+    }
+
+    .left::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      bottom: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 68%);
+    }
+
+    .left-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .left-logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
 }
+
+.law-badge {
+  width: clamp(180px, 32vw, 360px);
+  max-width: 100%;
+  padding: 0.45rem 0.7rem;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+}
+
+.law-badge img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 64px;
+  object-fit: contain;
+}
+
+    .uni-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+
+    .uni-mini {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      opacity: 0.86;
+    }
+
+    .uni-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.48rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.12);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .left-content {
+      margin-top: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topic-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 0.65rem;
+    }
+
+    .topic-title {
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      line-height: 1.18;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      max-width: 520px;
+    }
+
+    .topic-desc {
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.75;
+      opacity: 0.92;
+      max-width: 520px;
+    }
+
+    .brand-wing {
+      margin-top: 1.8rem;
+      width: min(360px, 82%);
+      opacity: 0.18;
+      display: block;
+    }
+
+    .info-list {
+      margin-top: 1.3rem;
+      display: grid;
+      gap: 0.75rem;
+      max-width: 500px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.72rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      opacity: 0.96;
+    }
+
+    .info-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      font-weight: 800;
+    }
+
+    .right {
+      padding: 2rem;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,248,248,0.98));
+    }
+
+    .form-card {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .top-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .top-logo img {
+  display: block;
+  width: clamp(72px, 12vw, 110px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+    .form-head {
+      text-align: center;
+      margin-bottom: 1.3rem;
+    }
+
+    .form-head h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.45rem;
+      line-height: 1.6;
+    }
+
+    .card-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 1.2rem;
+      box-shadow: 0 16px 40px rgba(17, 17, 17, 0.06);
+    }
+
+    .group {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    label {
+      font-size: 0.92rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.82rem 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      font: inherit;
+      color: var(--text);
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #d98394;
+      box-shadow: 0 0 0 4px rgba(200, 16, 46, 0.08);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .inline {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-end;
+    }
+
+    button {
+      border: 0;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      color: #fff;
+      padding: 0.85rem 1.05rem;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.18s ease;
+      box-shadow: 0 12px 24px rgba(200, 16, 46, 0.18);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background: #c7c9cf;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #fff3f4;
+      color: var(--brand-dark);
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: 1px solid var(--border);
+      width: fit-content;
+      margin-top: 0.25rem;
+    }
+    @media (max-width: 920px) {
+  .left-logo {
+    justify-content: center;
+  }
+
+  .law-badge {
+    width: clamp(180px, 48vw, 320px);
+  }
+
+  .law-badge img {
+    max-height: 58px;
+  }
+}
+
+@media (max-width: 640px) {
+  .left-top {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left-logo {
+    justify-content: center;
+  }
+
+  .law-badge {
+    width: min(78vw, 280px);
+    padding: 0.4rem 0.65rem;
+  }
+
+  .law-badge img {
+    max-height: 52px;
+  }
+
+  .top-logo img {
+    width: min(88px, 24vw);
+  }
+}
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--brand);
+      flex: 0 0 auto;
+    }
+
+    .form-note {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      background: #fff8f8;
+      border: 1px dashed #e7b6bf;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .message {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      display: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.55;
+    }
+
+    .message.success {
+      background: #ecfdf3;
+      color: #065f46;
+      border: 1px solid #bbf7d0;
+      display: block;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      display: block;
+    }
+
+    .footer-note {
+      margin-top: 1rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 920px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .left,
+      .right {
+        padding: 1.4rem;
+      }
+
+      .brand-wing {
+        width: min(300px, 78%);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0.7rem;
+      }
+
+      .shell {
+        border-radius: 22px;
+      }
+
+      .left-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .inline {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .topic-title {
+        font-size: 1.5rem;
+      }
+
+      .form-head h1 {
+        font-size: 1.35rem;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <h1>Đặt câu hỏi</h1>
-    <p class="subtitle">Nhập ID phiên hoặc mở link có id để gửi câu hỏi.</p>
-
-    <div class="group">
-      <label for="sessionInput">ID phiên (6 số)</label>
-      <div class="inline">
-        <input id="sessionInput" maxlength="6" placeholder="123456" />
-        <button id="setSessionBtn" type="button">Xác nhận</button>
+  <div class="shell">
+    <section class="left">
+      <div class="left-top">
+        <div class="left-logo">
+          <div class="law-badge">
+            <img src="./assets/hiu-horizontal.png" alt="HIU Law">
+          </div>
+          <div class="uni-meta">
+          </div>
+        </div>
       </div>
-      <div id="sessionBadge" class="badge">Chưa có phiên.</div>
-    </div>
 
-    <form id="askForm">
-      <div class="group">
-        <label for="name">Tên của bạn</label>
-        <input id="name" type="text" maxlength="50" placeholder="Nguyễn Văn A" required />
-      </div>
-      <div class="group">
-        <label for="question">Câu hỏi</label>
-        <textarea id="question" placeholder="Nhập câu hỏi..."></textarea>
-      </div>
-      <button id="submitBtn" type="submit" disabled>Gửi câu hỏi</button>
-    </form>
+      <div class="left-content">
+        <div class="topic-label">Talkshow hôm nay</div>
+        <div class="topic-title">TRANG BỊ LUẬT - VỮNG VÀNG ĐI LÀM</div>
+        <div class="topic-desc">
+          Gửi câu hỏi của bạn cho diễn giả hoặc ban tổ chức để được giải đáp trực tiếp trong chương trình.
+        </div>
 
-    <div id="message" class="message"></div>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-icon">1</div>
+            <div>Nhập <strong>ID phiên</strong> hoặc mở đúng link do ban tổ chức cung cấp.</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">2</div>
+            <div>Điền tên và nội dung câu hỏi rõ ràng, ngắn gọn, đúng chủ đề.</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">3</div>
+            <div>Câu hỏi sẽ được chuyển trực tiếp đến màn hình điều phối của talkshow.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="right">
+      <div class="form-card">
+        <div class="top-logo">
+          <img src="./assets/hiu-law.png" alt="HongBang International University">
+        </div>
+
+        <div class="form-head">
+          <h1>Đặt câu hỏi cho chương trình</h1>
+          <p class="subtitle">
+            Talkshow <strong>TRANG BỊ LUẬT - VỮNG VÀNG ĐI LÀM</strong>
+          </p>
+        </div>
+
+        <div class="card-box">
+          <div class="group" style="margin-top:0;">
+            <label for="sessionInput">ID phiên (6 số)</label>
+            <div class="inline">
+              <input id="sessionInput" maxlength="6" placeholder="123456" />
+              <button id="setSessionBtn" type="button">Xác nhận phiên</button>
+            </div>
+            <div id="sessionBadge" class="badge">
+              <span class="badge-dot"></span>
+              Chưa có phiên.
+            </div>
+          </div>
+
+          <form id="askForm">
+            <div class="group">
+              <label for="name">Tên của bạn</label>
+              <input id="name" type="text" maxlength="50" placeholder="Nguyễn Văn A" required />
+            </div>
+
+            <div class="group">
+              <label for="question">Câu hỏi</label>
+              <textarea id="question" placeholder="Ví dụ: Khi mới đi làm, sinh viên cần lưu ý những vấn đề pháp lý nào trong hợp đồng lao động?"></textarea>
+            </div>
+
+            <div class="group">
+              <button id="submitBtn" type="submit" disabled>Gửi câu hỏi</button>
+            </div>
+          </form>
+
+
+          <div id="message" class="message"></div>
+        </div>
+
+        <div class="footer-note">
+          HIU Law • HongBang International University
+        </div>
+      </div>
+    </section>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="receiver.js"></script>
 </body>
+
 </html>

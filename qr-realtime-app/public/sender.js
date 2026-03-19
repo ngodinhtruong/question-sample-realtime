@@ -46,7 +46,7 @@ function setActiveSession(id) {
   QRCode.toCanvas(qrCanvas, sessionLink, { width: 220, margin: 1, color: { dark: '#0d0d0d', light: '#ffffff' } });
 
   statusDot.classList.add('live');
-  setStatus(`Đang hoạt động · ${sessionId}`);
+  // setStatus(`Đang hoạt động · ${sessionId}`);
   saveSessionToLocal(sessionId);
 }
 
@@ -214,19 +214,19 @@ async function loadSessionHistory(id) {
 }));
         qCounter = questions.length;
         renderQuestions();
-        setStatus(`Phiên ${id} sẵn sàng.`);
+        // setStatus(`Phiên ${id} sẵn sàng.`);
       } else {
         questions = [];
         qCounter = 0;
         renderQuestions();
-        setStatus(`Phiên ${id} sẵn sàng (không tải được lịch sử).`);
+        // setStatus(`Phiên ${id} sẵn sàng (không tải được lịch sử).`);
       }
     } catch (historyErr) {
-      console.error('History load error:', historyErr);
+      // console.error('History load error:', historyErr);
       questions = [];
       qCounter = 0;
       renderQuestions();
-      setStatus(`Phiên ${id} sẵn sàng.`);
+      // setStatus(`Phiên ${id} sẵn sàng.`);
     }
     return true;
   } catch (err) {
@@ -282,7 +282,7 @@ async function createSession() {
     questions = [];
     qCounter = 0;
     renderQuestions();
-    setStatus(`Phiên ${id} đã tạo. Chia sẻ QR hoặc link để nhận câu hỏi.`);
+    setStatus(``);
     saveSessionToLocal(id);
     await loadSessionHistory(id);
   } catch (err) {
@@ -372,11 +372,11 @@ async function markAnswered(questionId) {
     if (q) q.answered = true;
 
     renderQuestions();
-    setStatus('Đã đánh dấu câu hỏi là đã trả lời.');
+    setStatus('');
     return true;
   } catch (err) {
     console.error(err);
-    setStatus('Lỗi cập nhật trạng thái.');
+    setStatus('');
     return false;
   }
 }
@@ -394,7 +394,7 @@ async function loadFromPath() {
     if (loaded) return;
   }
 
-  setStatus('Chưa có phiên. Tạo phiên mới để bắt đầu.');
+  setStatus('');
 }
 function openQrModal() {
   if (!sessionLink) return;
